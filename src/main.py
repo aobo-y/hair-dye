@@ -10,7 +10,9 @@ import config
 from models import MobileHairNet
 from trainer import Trainer
 from evaluate import test
-from data import HairDataset
+from dataset import HairDataset
+
+from utils import CheckpointManager
 
 DIR_PATH = os.path.dirname(__file__)
 USE_CUDA = torch.cuda.is_available()
@@ -38,17 +40,17 @@ def train(mode, model, checkpoint, checkpoint_mng):
         trainer.resume(checkpoint)
 
     trianfile = os.path.join(DIR_PATH, config.TRAIN_CORPUS)
-    devfile = os.path.join(DIR_PATH, config.DEV_CORPUS)
+    devfile = os.path.join(DIR_PATH, config.TEST_CORPUS)
 
     print("Reading training data from %s..." % trianfile)
 
-    train_datasets = HairDataset(trianfile)
+    train_datasets = HairDataset(trianfile, 224)
 
     print(f'Read {len(train_datasets)} training images')
 
     print("Reading development data from %s..." % devfile)
 
-    dev_datasets = HairDataset(devfile)
+    dev_datasets = HairDataset(devfile, 224)
 
     print(f'Read {len(dev_datasets)} development images')
 
