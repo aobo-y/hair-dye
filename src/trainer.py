@@ -7,12 +7,11 @@ import math
 import random
 from datetime import datetime
 import torch
-from torch.nn.functional import mse_loss
 from torch.utils.data import DataLoader
 from torch import optim
 import config
 
-from loss import iou_loss, HairMatLoss
+from loss import iou_loss, hairmat_loss
 
 USE_CUDA = torch.cuda.is_available()
 DEVICE = torch.device("cuda" if USE_CUDA else "cpu")
@@ -31,8 +30,6 @@ class Trainer:
         self.trained_epoch = 0
         self.train_loss = {'loss': [], 'iou':[]}
         self.dev_loss = {'loss': [], 'iou':[]}
-
-        self.loss = HairMatLoss().to(DEVICE)
 
     def log(self, *args):
         '''formatted log output for training'''
@@ -65,7 +62,7 @@ class Trainer:
         image, mask = (i.to(DEVICE) for i in training_batch)
 
         pred = self.model(image)
-        loss = self.loss(pred, image, mask)
+        loss = hairmat_loss(pred, image, mask)
 
         # if in training, not validate
         if not val:
@@ -92,7 +89,12 @@ class Trainer:
         start_epoch = self.trained_epoch + 1
 
         # Data loaders with custom batch builder
-        trainloader = DataLoader(train_data, batch_size=batch_size, shuffle=True)
+        trainloader = DataLoader(
+            train_data,
+            batch_size=batch_size,
+            shuffle=True,
+            num_workers=config.LOADER_WORKERS
+        )
 
         self.log(f'Start training from epoch {start_epoch} to {n_epochs}...')
 
