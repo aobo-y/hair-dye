@@ -78,8 +78,6 @@ class Trainer:
 
         iou = iou_loss(pred, mask)
 
-        print(pred[0][0][pred[0][0] >= 0.5].size())
-
         return loss.item(), iou.item(), pred
 
     def train(self, train_data, n_epochs, batch_size=1, stage=None, dev_data=None):
