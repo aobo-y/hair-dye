@@ -162,7 +162,6 @@ class Trainer:
                     'epoch': epoch,
                     'train_loss': self.train_loss,
                     'dev_loss': self.dev_loss,
-                    'train_mode': config.TRAIN_MODE,
                     'model': self.model.state_dict(),
                     'opt': self.optimizer.state_dict()
                 })
