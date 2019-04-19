@@ -6,6 +6,8 @@ import os
 import math
 import random
 from datetime import datetime
+import numpy as np
+import matplotlib.pyplot as plt
 import torch
 from torch.utils.data import DataLoader
 from torch import optim
@@ -76,7 +78,7 @@ class Trainer:
 
         iou = iou_loss(pred, mask)
 
-        return loss.item(), iou.item()
+        return loss.item(), iou.item(), pred
 
     def train(self, train_data, n_epochs, batch_size=1, stage=None, dev_data=None):
         """
@@ -92,8 +94,8 @@ class Trainer:
         trainloader = DataLoader(
             train_data,
             batch_size=batch_size,
-            shuffle=True,
-            num_workers=config.LOADER_WORKERS
+            shuffle=True
+            # num_workers=config.LOADER_WORKERS
         )
 
         self.log(f'Start training from epoch {start_epoch} to {n_epochs}...')
@@ -104,11 +106,12 @@ class Trainer:
 
             for idx, training_batch in enumerate(trainloader):
                 # run a training iteration with batch
-                loss, iou = self.train_batch(training_batch)
+                loss, iou, pred = self.train_batch(training_batch)
 
                 # Accumulate losses to print
                 loss_sum += loss
                 iou_sum += iou
+
 
                 # Print progress
                 iteration = idx + 1
@@ -117,6 +120,9 @@ class Trainer:
                     avg_iou = iou_sum / iteration
 
                     self.log('Epoch {}; Iter: {}; Percent: {:.1f}%; Avg loss: {:.4f}; Avg IOU: {:.4f};'.format(epoch, iteration, iteration / len(trainloader) * 100, avg_loss, avg_iou))
+
+                    pred = pred[0].argmax(0)
+                    self.save_sample_imgs(training_batch[0][0], training_batch[1][0], pred, epoch, iteration)
 
 
             self.trained_epoch = epoch
@@ -131,7 +137,7 @@ class Trainer:
                 devloader = DataLoader(dev_data, batch_size=batch_size, shuffle=False)
 
                 for dev_batch in devloader:
-                    loss, iou = self.train_batch(dev_batch, val=True)
+                    loss, iou, pred = self.train_batch(dev_batch, val=True)
 
                     # Accumulate losses to print
                     loss_sum += loss
@@ -145,6 +151,9 @@ class Trainer:
                 self.dev_loss['loss'].append(avg_loss)
                 self.dev_loss['iou'].append(avg_iou)
 
+                pred = pred[0].argmax(0)
+                dev_batch = devloader[0]
+                self.save_sample_imgs(dev_batch[0][0], dev_batch[1][0], pred, epoch, 'val')
 
             # Save checkpoint
             if epoch % config.SAVE_EVERY == 0:
@@ -160,3 +169,27 @@ class Trainer:
 
                 self.log('Save checkpoint:', cp_name)
 
+    def save_sample_imgs(self, img, mask, prediction, epoch, iter):
+        data = [img, mask, prediction]
+        names = ["Image", "Mask", "Prediction"]
+
+        fig = plt.figure()
+        for i, d in enumerate(data):
+            d = d.squeeze()
+            im = d.data.cpu().numpy()
+
+            if i > 0:
+                im = np.expand_dims(im, axis=0)
+                im = np.concatenate((im, im, im), axis=0)
+            else:
+                im = (im + 1) / 2
+
+            im = im.transpose(1, 2, 0)
+
+            f = fig.add_subplot(1, 3, i + 1)
+            f.imshow(im)
+            f.set_title(names[i])
+            f.set_xticks([])
+            f.set_yticks([])
+
+        self.checkpoint_mng.save_image(epoch + '-' + iter, fig)

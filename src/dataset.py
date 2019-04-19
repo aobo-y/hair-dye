@@ -50,7 +50,7 @@ class HairDataset(torch.utils.data.Dataset):
         maskfilename = self.image_names[index].split('.')[0] + '.pbm'
         mask = Image.open(os.path.join(self.maskdir_path, maskfilename))
 
-        image, mask = self.image_aug(image, mask)
+        # image, mask = self.image_aug(image, mask)
 
 
         transform_image = transforms.Compose([
