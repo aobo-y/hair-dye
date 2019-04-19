@@ -41,7 +41,7 @@ class CheckpointManager:
         pass
 
     def save_image(self, name, fig):
-        filepath = './sample_pic' + name + '.png'
+        filepath = self.__fullpath(name + '.png')
         self.__ensure_folder()
 
         fig.savefig(filepath)
