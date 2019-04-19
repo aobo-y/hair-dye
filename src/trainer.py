@@ -192,4 +192,4 @@ class Trainer:
             f.set_xticks([])
             f.set_yticks([])
 
-        self.checkpoint_mng.save_image(epoch + '-' + iter, fig)
+        self.checkpoint_mng.save_image(f'{epoch}-{iter}', fig)
