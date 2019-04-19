@@ -136,12 +136,16 @@ class Trainer:
 
                 devloader = DataLoader(dev_data, batch_size=batch_size, shuffle=False)
 
-                for dev_batch in devloader:
+                for i, dev_batch in enumerate(devloader):
                     loss, iou, pred = self.train_batch(dev_batch, val=True)
 
                     # Accumulate losses to print
                     loss_sum += loss
                     iou_sum += iou
+
+                    if i == 0:
+                        pred = pred[0].argmax(0)
+                        self.save_sample_imgs(dev_batch[0][0], dev_batch[1][0], pred, epoch, 'val')
 
                 avg_loss = loss_sum / len(devloader)
                 avg_iou = iou_sum / len(devloader)
@@ -150,9 +154,6 @@ class Trainer:
 
                 self.dev_loss['loss'].append(avg_loss)
                 self.dev_loss['iou'].append(avg_iou)
-
-                pred = pred[0].argmax(0)
-                self.save_sample_imgs(dev_batch[0][0], dev_batch[1][0], pred, epoch, 'val')
 
             # Save checkpoint
             if epoch % config.SAVE_EVERY == 0:
