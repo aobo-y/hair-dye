@@ -18,5 +18,5 @@ EPOCHS = 60
 LOADER_WORKERS = 4
 BATCH_SIZE = 4            # size of the mini batch in training state
 LR = 0.00004                # learning ratio
-PRINT_EVERY = 1000          # print the loss every x iterations
+PRINT_EVERY = 100          # print the loss every x iterations
 

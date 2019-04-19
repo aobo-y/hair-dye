@@ -40,4 +40,10 @@ class CheckpointManager:
     def loadMeta(self):
         pass
 
+    def save_image(self, name, fig):
+        filepath = self.__fullpath(name + '.png')
+        self.__ensure_folder()
+
+        fig.savefig(filepath)
+
 
