@@ -152,7 +152,6 @@ class Trainer:
                 self.dev_loss['iou'].append(avg_iou)
 
                 pred = pred[0].argmax(0)
-                dev_batch = devloader[0]
                 self.save_sample_imgs(dev_batch[0][0], dev_batch[1][0], pred, epoch, 'val')
 
             # Save checkpoint
