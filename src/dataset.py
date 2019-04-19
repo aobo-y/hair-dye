@@ -3,8 +3,8 @@ import os
 import torch.utils.data
 import torchvision.transforms as transforms
 from PIL import Image
-from imgaug import augmenters as iaa
-import imgaug as ia
+# from imgaug import augmenters as iaa
+# import imgaug as ia
 import numpy as np
 
 class HairDataset(torch.utils.data.Dataset):
