@@ -32,6 +32,9 @@ class CheckpointManager:
         filepath = self.__fullpath(name + '.tar')
         checkpoint = torch.load(filepath, map_location=device)
 
+        if not os.path.exists(self.__fullpath(META_FILE)):
+            return checkpoint
+
         with open(self.__fullpath(META_FILE), 'rb') as fin:
             meta = pickle.load(fin)
 
