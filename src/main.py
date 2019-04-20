@@ -9,7 +9,7 @@ import torch
 import config
 from models import MobileHairNet
 from trainer import Trainer
-from evaluate import test
+from evaluate import test, evaluate
 from dataset import HairDataset
 
 from utils import CheckpointManager
@@ -59,23 +59,43 @@ def train(mode, model, checkpoint, checkpoint_mng):
 
     trainer.train(train_datasets, config.EPOCHS, config.BATCH_SIZE, stage=mode, dev_data=dev_datasets)
 
-def evaluate(model, checkpoint):
+def test(model, checkpoint):
     # Set dropout layers to eval mode
     model.eval()
 
     testfile = os.path.join(DIR_PATH, config.TEST_CORPUS)
     print("Reading Testing data from %s..." % testfile)
 
-    test_datasets = HairDataset(testfile)
+    test_datasets = HairDataset(testfile, 224)
 
     print(f'Read {len(test_datasets)} testing images')
 
     test(test_datasets, model)
 
+def run(model, checkpoint, dset='test', idx=0):
+    # Set dropout layers to eval mode
+    model.eval()
+
+    if dset == 'train':
+        path = config.TRAIN_CORPUS
+    else:
+        path = config.TEST_CORPUS
+
+    testfile = os.path.join(DIR_PATH, path)
+    print("Reading Testing data from %s..." % testfile)
+
+    test_datasets = HairDataset(testfile, 224)
+
+    print(f'Read {len(test_datasets)} testing images')
+
+    evaluate(test_datasets, model, idx)
+
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('-m', '--mode', choices={'train', 'test'}, help="mode to run the network")
+    parser.add_argument('-m', '--mode', choices={'train', 'test', 'run'}, help="mode to run the network")
     parser.add_argument('-cp', '--checkpoint')
+    parser.add_argument('-st', '--set', choices={'train', 'test'}, default='test')
+    parser.add_argument('-im', '--image', type=int, default=0)
     args = parser.parse_args()
 
     print('Saving path:', SAVE_PATH)
@@ -92,8 +112,10 @@ def main():
         train(args.mode, model, checkpoint, checkpoint_mng)
 
     elif args.mode == 'test':
-        evaluate(model, checkpoint)
+        test(model, checkpoint)
 
+    elif args.mode == 'run':
+        run(model, checkpoint, args.set, args.image)
 
 def init():
     parser = argparse.ArgumentParser()
