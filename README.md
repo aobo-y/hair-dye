@@ -4,11 +4,14 @@
 
 ```
 $ conda env create -f environment.yml
+$ source activate hairdye
 ```
+
+when you done all the training things, at last you deactivate environment by running `source deactivate`.
+And the next time you want to train your network, just run `source activate hairdye`, you only have to create the environment once.
 
 ## Download dataset
 
 ```
-$ cd data
-$ python download.py
+$ sh download.sh
 ```
