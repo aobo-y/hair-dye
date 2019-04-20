@@ -21,6 +21,7 @@ $ sh download.sh
 ## Train
 
 ```
+$ cd src
 $ nohup python -u main.py --mode=train > out.log &
 ```
 
@@ -36,7 +37,7 @@ $ python main.py --mode=test
 Plot a groundtruth image and the predicted segmentation
 
 ```
-python  main.py --mode=run --set=test --image=27
+$ python main.py --mode=run --set=test --image=27
 ```
 
 `set` can be one `train` and `test`, default is `test`
