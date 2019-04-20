@@ -1,2 +1,2 @@
 # download datasets
-gdown xxxx
+# use download.sh in hair-dye/ directory instead.
