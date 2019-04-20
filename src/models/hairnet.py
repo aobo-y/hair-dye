@@ -1,5 +1,7 @@
 import torch
 import torch.nn as nn
+from torch.nn import functional as F
+
 
 class _Layer_Depwise_Encode(nn.Module):
   def __init__(self, in_channels, out_channels, kernel_size=3, reserve=False): #nf==64
@@ -34,6 +36,13 @@ class _Layer_Depwise_Decode(nn.Module):
     out = self.layer(x)
     return out
 
+class _Layer_Upsample(nn.Module):
+  def __init__(self):
+    super(_Layer_Upsample, self).__init__()
+
+  def forward(self, x):
+    return F.interpolate(x, scale_factor=2)
+
 class MobileHairNet(nn.Module):
   def __init__(self, im_size=224, nf=32, kernel_size=3):
     super(MobileHairNet, self).__init__()
@@ -66,23 +75,23 @@ class MobileHairNet(nn.Module):
     )
 
     # Decoder
-    self.decode_layer1 = nn.Upsample(scale_factor=2)
+    self.decode_layer1 = _Layer_Upsample()
     self.decode_layer2 = nn.Sequential(
       nn.Conv2d(in_channels=32 * nf, out_channels=2 * nf, kernel_size=1),
       _Layer_Depwise_Decode(in_channel=2 * nf, out_channel=2 * nf, kernel_size=kernel_size),
-      nn.Upsample(scale_factor=2)
+      _Layer_Upsample()
     )
     self.decode_layer3 = nn.Sequential(
       _Layer_Depwise_Decode(in_channel=2 * nf, out_channel=2 * nf, kernel_size=kernel_size),
-      nn.Upsample(scale_factor=2)
+      _Layer_Upsample()
     )
     self.decode_layer4 = nn.Sequential(
       _Layer_Depwise_Decode(in_channel=2 * nf, out_channel=2 * nf, kernel_size=kernel_size),
-      nn.Upsample(scale_factor=2)
+      _Layer_Upsample()
     )
     self.decode_layer5 = nn.Sequential(
       _Layer_Depwise_Decode(in_channel=2 * nf, out_channel=2 * nf, kernel_size=kernel_size),
-      nn.Upsample(scale_factor=2),
+      _Layer_Upsample(),
       _Layer_Depwise_Decode(in_channel=2 * nf, out_channel=2 * nf, kernel_size=kernel_size),
       nn.Conv2d(in_channels=2 * nf, out_channels=2, kernel_size=kernel_size, padding=1)
     )
