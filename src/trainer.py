@@ -12,6 +12,7 @@ import torch
 from torch.utils.data import DataLoader
 from torch import optim
 import config
+from utils import create_figure
 
 from loss import iou_loss, hairmat_loss
 
@@ -169,27 +170,7 @@ class Trainer:
                 self.log('Save checkpoint:', cp_name)
 
     def save_sample_imgs(self, img, mask, prediction, epoch, iter):
-        data = [img, mask, prediction]
-        names = ["Image", "Mask", "Prediction"]
-
-        fig = plt.figure()
-        for i, d in enumerate(data):
-            d = d.squeeze()
-            im = d.data.cpu().numpy()
-
-            if i > 0:
-                im = np.expand_dims(im, axis=0)
-                im = np.concatenate((im, im, im), axis=0)
-            else:
-                im = (im + 1) / 2
-
-            im = im.transpose(1, 2, 0)
-
-            f = fig.add_subplot(1, 3, i + 1)
-            f.imshow(im)
-            f.set_title(names[i])
-            f.set_xticks([])
-            f.set_yticks([])
+        fig = create_figure(img, mask, prediction.float())
 
         self.checkpoint_mng.save_image(f'{epoch}-{iter}', fig)
         plt.close(fig)
