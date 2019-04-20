@@ -6,6 +6,9 @@ import torch
 from torch.nn.modules.loss import _WeightedLoss
 import torch.nn.functional as F
 
+USE_CUDA = torch.cuda.is_available()
+DEVICE = torch.device("cuda" if USE_CUDA else "cpu")
+
 def image_gradient(image):
   edges_x = filters.sobel_h(image)
   edges_y = filters.sobel_v(image)
@@ -34,9 +37,9 @@ def hairmat_loss(pred, image, mask):
   pred_flat = pred.permute(0, 2, 3, 1).contiguous().view(-1, 2)
   mask_flat = mask.squeeze(1).view(-1).long()
   cross_entropy_loss = F.cross_entropy(pred_flat, mask_flat)
-  # image_loss = image_gradient_loss(image, pred).to(self.device)
-  return cross_entropy_loss
-  # return torch.add(cross_entropy_loss, 0.5*image_loss.float())
+  image_loss = image_gradient_loss(image, pred).to(DEVICE)
+  #return cross_entropy_loss
+  return torch.add(cross_entropy_loss, 0.5*image_loss.float())
 
 def iou_loss(pred, mask):
   pred = torch.argmax(pred, 1).long()
