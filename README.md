@@ -1,5 +1,7 @@
 # hair-dye
 
+<img src="./sample.png" width="450"/>
+
 ## Create environment
 
 ```
@@ -38,4 +40,5 @@ python  main.py --mode=run --set=test --image=27
 ```
 
 `set` can be one `train` and `test`, default is `test`
+
 `image` is the image index of the set, default is `0`
