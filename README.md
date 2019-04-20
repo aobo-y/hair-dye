@@ -15,3 +15,10 @@ And the next time you want to train your network, just run `source activate hair
 ```
 $ sh download.sh
 ```
+
+## Train
+```
+nohup python -u main.py --mode=train > out.log &
+```
+
+The checkpoint file and sample images can be seen in src/checkpoint/default/ directory.
