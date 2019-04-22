@@ -42,5 +42,5 @@ def evaluate(test_data, model, idx):
 
     pred = pred[0].argmax(0).float()
 
-    create_figure(image[0], mask[0], pred)
+    create_figure(image[0], mask[0], pred, dye=True)
     plt.show()

@@ -1,24 +1,38 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from torchvision import transforms
 
-def create_figure(img, mask, prediction):
+def create_figure(img, mask, prediction, dye=False):
+  img = (img + 1) / 2
+
   data = [img, mask, prediction]
   names = ["Image", "Mask", "Prediction"]
+
+  if dye:
+    transform_hue = transforms.Compose([
+      transforms.ToPILImage(),
+      transforms.ColorJitter(hue=0.5, saturation=0.7, contrast=0.2, brightness=0.2),
+      transforms.ToTensor()
+    ])
+    dyed = transform_hue(img)
+
+    dyed = prediction * dyed + (1 - prediction) * img
+    data.append(dyed)
+    names.append('Dye')
+
 
   fig = plt.figure()
   for i, d in enumerate(data):
     d = d.squeeze()
     im = d.data.cpu().numpy()
 
-    if i > 0:
+    if im.shape[0] != 3:
         im = np.expand_dims(im, axis=0)
         im = np.concatenate((im, im, im), axis=0)
-    else:
-        im = (im + 1) / 2
 
     im = im.transpose(1, 2, 0)
 
-    f = fig.add_subplot(1, 3, i + 1)
+    f = fig.add_subplot(1, len(data), i + 1)
     f.imshow(im)
     f.set_title(names[i])
     f.set_xticks([])
