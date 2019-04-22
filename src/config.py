@@ -13,7 +13,7 @@ SAVE_EVERY = 4       # save the checkpoint every x epochs
 EPOCHS = 60
 
 # Configure models - training relevant
-IMG_SIZE = 224
+IMG_SIZE = 448
 
 # Configure training/optimization
 LOADER_WORKERS = 4
