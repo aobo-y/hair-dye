@@ -44,13 +44,13 @@ def train(mode, model, checkpoint, checkpoint_mng):
 
     print("Reading training data from %s..." % trianfile)
 
-    train_datasets = HairDataset(trianfile, 224)
+    train_datasets = HairDataset(trianfile, config.IMG_SIZE)
 
     print(f'Read {len(train_datasets)} training images')
 
     print("Reading development data from %s..." % devfile)
 
-    dev_datasets = HairDataset(devfile, 224)
+    dev_datasets = HairDataset(devfile, config.IMG_SIZE)
 
     print(f'Read {len(dev_datasets)} development images')
 
@@ -66,7 +66,7 @@ def test(model, checkpoint):
     testfile = os.path.join(DIR_PATH, config.TEST_CORPUS)
     print("Reading Testing data from %s..." % testfile)
 
-    test_datasets = HairDataset(testfile, 224)
+    test_datasets = HairDataset(testfile, config.IMG_SIZE)
 
     print(f'Read {len(test_datasets)} testing images')
 
@@ -84,7 +84,7 @@ def run(model, checkpoint, dset='test', idx=0):
     testfile = os.path.join(DIR_PATH, path)
     print("Reading Testing data from %s..." % testfile)
 
-    test_datasets = HairDataset(testfile, 224)
+    test_datasets = HairDataset(testfile, config.IMG_SIZE)
 
     print(f'Read {len(test_datasets)} testing images')
 

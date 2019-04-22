@@ -5,6 +5,7 @@ import torch
 
 from torch.nn.modules.loss import _WeightedLoss
 import torch.nn.functional as F
+import config
 
 USE_CUDA = torch.cuda.is_available()
 DEVICE = torch.device("cuda" if USE_CUDA else "cpu")
@@ -26,7 +27,7 @@ def image_gradient_loss(image, pred):
     IMx = torch.mul(image_grad_x, pred_grad_x).float()
     IMy = torch.mul(image_grad_y, pred_grad_y).float()
     Mmag = torch.sqrt(torch.add(torch.pow(pred_grad_x, 2), torch.pow(pred_grad_y, 2))).float()
-    IM = torch.add(torch.ones(224, 224), torch.neg(torch.pow(torch.add(IMx, IMy), 2)))
+    IM = torch.add(torch.ones(config.IMG_SIZE, config.IMG_SIZE), torch.neg(torch.pow(torch.add(IMx, IMy), 2)))
     numerator = torch.sum(torch.mul(Mmag, IM))
     denominator = torch.sum(Mmag)
     loss = loss + torch.div(numerator, denominator)
