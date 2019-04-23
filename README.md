@@ -34,12 +34,12 @@ $ python main.py --mode=test
 
 ## Run
 
-Plot a groundtruth image and the predicted segmentation
+Plot a groundtruth image, the predicted segmentation and the hue adjusted result
 
 ```
-$ python main.py --mode=run --set=test --image=27
+$ python main.py --mode=run --set=test --num=4
 ```
 
 `set` can be one `train` and `test`, default is `test`
 
-`image` is the image index of the set, default is `0`
+`num` is the random number of images from the set, default is `4`
