@@ -72,7 +72,7 @@ def test(model, checkpoint):
 
     test(test_datasets, model)
 
-def run(model, checkpoint, dset='test', idx=0):
+def run(model, checkpoint, dset='test', num=4):
     # Set dropout layers to eval mode
     model.eval()
 
@@ -88,14 +88,14 @@ def run(model, checkpoint, dset='test', idx=0):
 
     print(f'Read {len(test_datasets)} testing images')
 
-    evaluate(test_datasets, model, idx)
+    evaluate(test_datasets, model, num, absolute=False)
 
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('-m', '--mode', choices={'train', 'test', 'run'}, help="mode to run the network")
     parser.add_argument('-cp', '--checkpoint')
     parser.add_argument('-st', '--set', choices={'train', 'test'}, default='test')
-    parser.add_argument('-im', '--image', type=int, default=0)
+    parser.add_argument('-n', '--num', type=int, default=4)
     args = parser.parse_args()
 
     print('Saving path:', SAVE_PATH)
@@ -115,7 +115,7 @@ def main():
         test(model, checkpoint)
 
     elif args.mode == 'run':
-        run(model, checkpoint, args.set, args.image)
+        run(model, checkpoint, args.set, args.num)
 
 def init():
     parser = argparse.ArgumentParser()
