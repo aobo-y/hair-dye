@@ -34,10 +34,11 @@ $ python main.py --mode=test
 
 ## Run
 
-Plot a groundtruth image, the predicted segmentation and the hue adjusted result
+Plot a groundtruth image, the predicted segmentation and the hue adjusted result from the datasets or any specified images
 
 ```
 $ python main.py --mode=run --set=test --num=4
+$ python main.py --mode=run --image=./path/to/the/image.png
 ```
 
 `set` can be one `train` and `test`, default is `test`

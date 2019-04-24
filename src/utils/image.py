@@ -3,16 +3,24 @@ import matplotlib.pyplot as plt
 from torchvision import transforms
 
 def create_figure(img, mask, prediction, dye=False):
-  return create_multi_figure([(img, mask, prediction)], dye)
+  return create_multi_figure([[img, mask, prediction]], dye)
 
 def create_multi_figure(rows, dye=False):
   fig = plt.figure()
 
-  for i, (img, mask, prediction) in enumerate(rows):
-    img = (img + 1) / 2
-
-    data = [img, mask, prediction]
+  # 3 tensors, the middle one is mask
+  if len(rows[0]) == 3:
     names = ["Image", "Mask", "Prediction"]
+  else:
+    names = ["Image", "Prediction"]
+
+  for i, data in enumerate(rows):
+    img = data[0]
+    prediction = data[-1]
+
+    # reverse normalization of the oriignal image
+    img = (img + 1) / 2
+    data[0] = img
 
     if dye:
       transform_hue = transforms.Compose([
