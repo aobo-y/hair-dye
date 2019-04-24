@@ -19,11 +19,11 @@ class ImgTransformer():
             transforms.CenterCrop(min(image.size[0], image.size[1])),
             transforms.Resize(self.img_size)
         ] + ([
-            transforms.ColorJitter(brightness=0.4, contrast=0.4, saturation=0.4, hue=0.5),
+            transforms.ColorJitter(brightness=1, contrast=1, saturation=1, hue=.5),
             transforms.RandomGrayscale(p=0.1)
         ] if self.color_aug else []) + [
             transforms.ToTensor(),
-            transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
+            transforms.Normalize((.5, .5, .5), (.5, .5, .5))
         ])
 
         transform_image = transformer(image)
