@@ -3,9 +3,9 @@ import matplotlib.pyplot as plt
 from torchvision import transforms
 
 def create_figure(img, mask, prediction, dye=False):
-  return create_multi_figure([(img, mask, prediction)])
+  return create_multi_figure([(img, mask, prediction)], dye)
 
-def create_multi_figure(rows, dye=True):
+def create_multi_figure(rows, dye=False):
   fig = plt.figure()
 
   for i, (img, mask, prediction) in enumerate(rows):
