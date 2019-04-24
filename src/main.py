@@ -9,8 +9,8 @@ import torch
 import config
 from models import MobileHairNet
 from trainer import Trainer
-from evaluate import test, evaluate
-from dataset import HairDataset
+from evaluate import test, evaluate, evaluateOne
+from dataset import HairDataset, ImgTransformer
 
 from utils import CheckpointManager
 
@@ -72,29 +72,36 @@ def test(model, checkpoint):
 
     test(test_datasets, model)
 
-def run(model, checkpoint, dset='test', num=4):
+def run(model, checkpoint, dset='test', num=4, img_path=None):
     # Set dropout layers to eval mode
     model.eval()
 
-    if dset == 'train':
-        path = config.TRAIN_CORPUS
+    if not img_path:
+        if dset == 'train':
+            path = config.TRAIN_CORPUS
+        else:
+            path = config.TEST_CORPUS
+
+        testfile = os.path.join(DIR_PATH, path)
+        print("Reading Testing data from %s..." % testfile)
+
+        test_datasets = HairDataset(testfile, config.IMG_SIZE)
+
+        print(f'Read {len(test_datasets)} testing images')
+
+        evaluate(test_datasets, model, num, absolute=False)
     else:
-        path = config.TEST_CORPUS
+        transformer = ImgTransformer(config.IMG_SIZE, color_aug=False)
+        img =  transformer.load(img_path)
+        evaluateOne(img, model, absolute=False)
 
-    testfile = os.path.join(DIR_PATH, path)
-    print("Reading Testing data from %s..." % testfile)
-
-    test_datasets = HairDataset(testfile, config.IMG_SIZE)
-
-    print(f'Read {len(test_datasets)} testing images')
-
-    evaluate(test_datasets, model, num, absolute=False)
 
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('-m', '--mode', choices={'train', 'test', 'run'}, help="mode to run the network")
     parser.add_argument('-cp', '--checkpoint')
     parser.add_argument('-st', '--set', choices={'train', 'test'}, default='test')
+    parser.add_argument('-im', '--image')
     parser.add_argument('-n', '--num', type=int, default=4)
     args = parser.parse_args()
 
@@ -115,7 +122,7 @@ def main():
         test(model, checkpoint)
 
     elif args.mode == 'run':
-        run(model, checkpoint, args.set, args.num)
+        run(model, checkpoint, dset=args.set, num=args.num, img_path=args.image)
 
 def init():
     parser = argparse.ArgumentParser()

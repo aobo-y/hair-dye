@@ -35,6 +35,26 @@ def test(test_data, model):
     print('Testing Loss: ', total_loss / len(test_data))
     print('Testing IOU: ', total_loss / len(test_data))
 
+def evaluateOne(img, model, absolute=True):
+    img = img.to(DEVICE).unsqueeze(0)
+    pred = model(img)
+
+    pred = pred.squeeze() # remove batch dim
+
+    if absolute:
+        pred = pred.argmax(0)
+    else:
+        pred = F.softmax(pred, dim=0)
+        pred = pred[1]
+        pred[pred < 0.4] = 0
+
+    pred = pred.float()
+
+    rows = [[img[0], pred]]
+    create_multi_figure(rows, dye=True)
+    plt.show()
+
+
 def evaluate(test_data, model, num, absolute=True):
     rows = [None] * num
     for i in range(num):
@@ -52,14 +72,12 @@ def evaluate(test_data, model, num, absolute=True):
             pred = pred.argmax(0)
         else:
             pred = F.softmax(pred, dim=0)
-
-            pred[0] = 0
-            pred[1][pred[1] < 0.4] = 0
-            pred, _ = pred.max(0)
+            pred = pred[1]
+            pred[pred < 0.4] = 0
 
         pred = pred.float()
 
-        rows[i] = (image[0], mask[0], pred)
+        rows[i] = [image[0], mask[0], pred]
 
     create_multi_figure(rows, dye=True)
     plt.show()
