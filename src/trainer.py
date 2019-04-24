@@ -122,8 +122,8 @@ class Trainer:
 
                     self.log('Epoch {}; Iter: {}; Percent: {:.1f}%; Avg loss: {:.4f}; Avg IOU: {:.4f};'.format(epoch, iteration, iteration / len(trainloader) * 100, avg_loss, avg_iou))
 
-                    pred = pred[0].argmax(0)
-                    self.save_sample_imgs(training_batch[0][0], training_batch[1][0], pred, epoch, iteration)
+                    # pred = pred[0].argmax(0)
+                    # self.save_sample_imgs(training_batch[0][0], training_batch[1][0], pred, epoch, iteration)
 
 
             self.trained_epoch = epoch
@@ -144,9 +144,9 @@ class Trainer:
                     loss_sum += loss
                     iou_sum += iou
 
-                    if i == 0:
-                        pred = pred[0].argmax(0)
-                        self.save_sample_imgs(dev_batch[0][0], dev_batch[1][0], pred, epoch, 'val')
+                    # if i == 0:
+                    #     pred = pred[0].argmax(0)
+                    #     self.save_sample_imgs(dev_batch[0][0], dev_batch[1][0], pred, epoch, 'val')
 
                 avg_loss = loss_sum / len(devloader)
                 avg_iou = iou_sum / len(devloader)

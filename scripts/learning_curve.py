@@ -6,7 +6,7 @@ DIR_PATH = os.path.dirname(__file__)
 
 cp_path = os.path.join(DIR_PATH, '../src/checkpoints')
 
-file_path = os.path.join(cp_path, 'default/train_60.tar')
+file_path = os.path.join(cp_path, 'default/train_100.tar')
 
 
 def get_loss(filepath):

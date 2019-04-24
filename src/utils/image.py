@@ -25,7 +25,7 @@ def create_multi_figure(rows, dye=False):
     if dye:
       transform_hue = transforms.Compose([
         transforms.ToPILImage(),
-        transforms.ColorJitter(hue=0.5, saturation=0.6, contrast=0.2, brightness=0.2),
+        transforms.ColorJitter(hue=0.5, saturation=0.8, contrast=0.2, brightness=0.3),
         transforms.ToTensor()
       ])
       dyed = transform_hue(img)
