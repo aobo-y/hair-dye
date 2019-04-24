@@ -46,7 +46,7 @@ def evaluateOne(img, model, absolute=True):
     else:
         pred = F.softmax(pred, dim=0)
         pred = pred[1]
-        pred[pred < 0.4] = 0
+        pred[pred < .4] = 0
 
     pred = pred.float()
 
@@ -73,7 +73,7 @@ def evaluate(test_data, model, num, absolute=True):
         else:
             pred = F.softmax(pred, dim=0)
             pred = pred[1]
-            pred[pred < 0.4] = 0
+            pred[pred < .4] = 0
 
         pred = pred.float()
 
