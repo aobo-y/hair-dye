@@ -44,7 +44,7 @@ def train(mode, model, checkpoint, checkpoint_mng):
 
     print("Reading training data from %s..." % trianfile)
 
-    train_datasets = HairDataset(trianfile, config.IMG_SIZE)
+    train_datasets = HairDataset(trianfile, config.IMG_SIZE, color_aug=True)
 
     print(f'Read {len(train_datasets)} training images')
 

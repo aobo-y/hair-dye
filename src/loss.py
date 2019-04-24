@@ -39,8 +39,7 @@ def hairmat_loss(pred, image, mask):
   mask_flat = mask.squeeze(1).view(-1).long()
   cross_entropy_loss = F.cross_entropy(pred_flat, mask_flat)
   image_loss = image_gradient_loss(image, pred).to(DEVICE)
-  #return cross_entropy_loss
-  return torch.add(cross_entropy_loss, 0.5 * image_loss.float())
+  return cross_entropy_loss + config.GRAD_LOSS_LAMBDA * image_loss.float()
 
 def iou_loss(pred, mask):
   pred = torch.argmax(pred, 1).long()

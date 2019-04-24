@@ -18,6 +18,7 @@ IMG_SIZE = 448
 # Configure training/optimization
 LOADER_WORKERS = 4
 BATCH_SIZE = 4            # size of the mini batch in training state
-LR = 0.00004                # learning ratio
+LR = 0.00001                # learning ratio
 PRINT_EVERY = 100          # print the loss every x iterations
 
+GRAD_LOSS_LAMBDA = 1.2
