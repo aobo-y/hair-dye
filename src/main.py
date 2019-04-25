@@ -9,14 +9,15 @@ import torch
 import config
 from models import MobileHairNet
 from trainer import Trainer
-from evaluate import test, evaluate, evaluateOne
+from evaluate import evalTest, evaluate, evaluateOne
 from dataset import HairDataset, ImgTransformer
 
 from utils import CheckpointManager
 
 DIR_PATH = os.path.dirname(__file__)
 USE_CUDA = torch.cuda.is_available()
-device = torch.device('cuda' if USE_CUDA else 'cpu')
+#device = torch.device('cuda' if USE_CUDA else 'cpu')
+device = torch.device('cpu')
 
 SAVE_PATH = os.path.join(DIR_PATH, config.SAVE_DIR, config.MODEL_NAME)
 
@@ -70,7 +71,7 @@ def test(model, checkpoint):
 
     print(f'Read {len(test_datasets)} testing images')
 
-    test(test_datasets, model)
+    evalTest(test_datasets, model)
 
 def run(model, checkpoint, dset='test', num=4, img_path=None):
     # Set dropout layers to eval mode
