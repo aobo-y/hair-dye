@@ -152,7 +152,7 @@ class Trainer:
                 avg_loss = loss_sum / len(devloader)
                 avg_iou = iou_sum / len(devloader)
 
-                self.log('Validation; Epoch {}; Avg loss: {:.4f}; Avg IG loss: {:.4f}; Avg IOU: {:.4f};'.format(epoch, avg_loss, avg_iou))
+                self.log('Validation; Epoch {}; Avg loss: {:.4f}; Avg IOU: {:.4f};'.format(epoch, avg_loss, avg_iou))
 
                 self.dev_loss['loss'].append(avg_loss)
                 self.dev_loss['iou'].append(avg_iou)
