@@ -13,27 +13,34 @@ from torch.nn.functional import mse_loss
 import matplotlib.pyplot as plt
 
 import config
-from loss import iou_loss, hairmat_loss
+from loss import iou_loss, hairmat_loss, acc_loss, F1_loss
 from utils import create_multi_figure
 
 
 USE_CUDA = torch.cuda.is_available()
-DEVICE = torch.device("cuda" if USE_CUDA else "cpu")
-
+#DEVICE = torch.device("cuda" if USE_CUDA else "cpu")
+DEVICE = torch.device('cpu')
 
 def evalTest(test_data, model):
-    testloader = DataLoader(test_data, batch_size=16, shuffle=False)
+    testloader = DataLoader(test_data, batch_size=4, shuffle=False)
 
-    total_loss, total_iou = 0, 0
+    total_loss, total_iou, total_acc, total_f1 = 0, 0, 0, 0
     for batch in testloader:
         image, mask = (i.to(DEVICE) for i in batch)
 
         pred = model(image)
-        total_loss += hairmat_loss(pred, image, mask)
-        total_iou += iou_loss(pred, mask)
+        total_loss += hairmat_loss(pred, image, mask).item()
+        iloss = iou_loss(pred, mask).item()
+        total_iou += iloss
+        aloss = acc_loss(pred, mask).item()
+        total_acc += aloss
+        floss = F1_loss(pred, mask).item()
+        total_f1 += floss
 
-    print('Testing Loss: ', total_loss / len(test_data))
-    print('Testing IOU: ', total_loss / len(test_data))
+    print('Testing Loss: ', total_loss / len(testloader) )
+    print('Testing IOU: ', total_iou / len(testloader)  )
+    print('Testing Acc: ', total_acc / len(testloader)  )
+    print('Testing F1: ', total_f1 / len(testloader)  )
 
 def evaluateOne(img, model, absolute=True):
     img = img.to(DEVICE).unsqueeze(0)
