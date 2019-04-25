@@ -59,12 +59,12 @@ def evaluate(test_data, model, num, absolute=True):
     rows = [None] * num
     for i in range(num):
         idx = random.randint(0, len(test_data) - 1)
-    # for i, idx in enumerate([203, 162, 53, 116, 159]):
+    # for i, idx in enumerate([122, 184, 106, 202]):
         image, mask = (i.to(DEVICE).unsqueeze(0) for i in test_data[idx])
         pred = model(image)
 
-        loss = hairmat_loss(pred, image, mask).item()
-        print(idx, 'loss:', loss)
+        celoss, igloss = hairmat_loss(pred, image, mask)
+        print(idx, 'ce loss:', celoss.item(), 'ig loss:', igloss.item())
 
         pred = pred.squeeze() # remove batch dim
 
