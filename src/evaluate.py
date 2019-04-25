@@ -21,7 +21,7 @@ USE_CUDA = torch.cuda.is_available()
 DEVICE = torch.device("cuda" if USE_CUDA else "cpu")
 
 
-def test(test_data, model):
+def evalTest(test_data, model):
     testloader = DataLoader(test_data, batch_size=16, shuffle=False)
 
     total_loss, total_iou = 0, 0
