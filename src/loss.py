@@ -50,3 +50,25 @@ def iou_loss(pred, mask):
   Overlep = torch.mul(pred, mask)
   loss = torch.div(torch.sum(Overlep).float(), torch.sum(Union).float())
   return loss
+
+def acc_loss(pred, mask):
+  pred = torch.argmax(pred, 1).long()
+  mask = torch.squeeze(mask).long()
+  all_ones = torch.ones_like(mask)
+  all_zeros = torch.zeros_like(mask)
+  Right = torch.where(pred == mask, all_ones, all_zeros)
+  #Overlep = torch.mul(pred, mask)
+  loss = torch.div(torch.sum(Right).float(), torch.sum(all_ones).float())
+  return loss
+
+def F1_loss(pred, mask):
+  pred = torch.argmax(pred, 1).long()
+  mask = torch.squeeze(mask).long()
+  all_ones = torch.ones_like(mask)
+  all_zeros = torch.zeros_like(mask)
+  #Right = torch.where(pred == mask, all_ones, all_zeros)
+  Overlep = torch.mul(pred, mask)
+  precision = torch.div(torch.sum(Overlep).float(), torch.sum(pred).float())
+  recall = torch.div(torch.sum(Overlep).float(), torch.sum(mask).float())
+  F1loss = torch.div(torch.mul(precision, recall), torch.add(precision, recall))
+  return F1loss*2
