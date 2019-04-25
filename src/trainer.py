@@ -68,7 +68,7 @@ class Trainer:
         image, mask = (i.to(DEVICE) for i in training_batch)
 
         pred = self.model(image)
-        loss = self.loss(pred, image, mask)
+        loss = self.loss(pred, mask, image)
 
         # if in training, not validate
         if not val:
