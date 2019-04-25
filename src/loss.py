@@ -35,11 +35,11 @@ class HairMattingLoss(nn.modules.loss._Loss):
     loss = self.bce_loss(pred, mask)
 
     if self.ratio_of_gradient > 0:
-      I_x = F.conv2d(image, sobel_kernel_x)
-      G_x = F.conv2d(pred, sobel_kernel_x)
+      I_x = F.conv2d(image, self.sobel_kernel_x)
+      G_x = F.conv2d(pred, self.sobel_kernel_x)
 
-      I_y = F.conv2d(image, sobel_kernel_y)
-      G_y = F.conv2d(pred, sobel_kernel_y)
+      I_y = F.conv2d(image, self.sobel_kernel_y)
+      G_y = F.conv2d(pred, self.sobel_kernel_y)
 
       G = torch.sqrt(G_x.pow(2) + G_y.pow(2))
 
