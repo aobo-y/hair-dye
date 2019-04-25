@@ -39,7 +39,8 @@ def hairmat_loss(pred, image, mask):
   pred_flat = pred.permute(0, 2, 3, 1).contiguous().view(-1, 2)
   mask_flat = mask.squeeze(1).view(-1).long()
   cross_entropy_loss = F.cross_entropy(pred_flat, mask_flat)
-  image_loss = image_gradient_loss(image, pred).to(DEVICE)
+  # image_loss = image_gradient_loss(image, pred).to(DEVICE)
+  image_loss = 0
   return cross_entropy_loss, image_loss.float()
 
 def iou_loss(pred, mask):
