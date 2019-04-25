@@ -16,7 +16,8 @@ from utils import CheckpointManager
 
 DIR_PATH = os.path.dirname(__file__)
 USE_CUDA = torch.cuda.is_available()
-device = torch.device('cuda' if USE_CUDA else 'cpu')
+#device = torch.device('cuda' if USE_CUDA else 'cpu')
+device = torch.device('cpu')
 
 SAVE_PATH = os.path.join(DIR_PATH, config.SAVE_DIR, config.MODEL_NAME)
 
