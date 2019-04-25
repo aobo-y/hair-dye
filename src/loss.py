@@ -24,13 +24,14 @@ def image_gradient_loss(image, pred):
     pred_grad_x, pred_grad_y = image_gradient(pred[i][0].cpu().detach().numpy())
     gray_image = torch.from_numpy(rgb2gray(image[i].permute(1, 2, 0).cpu().numpy()))
     image_grad_x, image_grad_y = image_gradient(gray_image)
-    IMx = torch.mul(image_grad_x, pred_grad_x).float()
-    IMy = torch.mul(image_grad_y, pred_grad_y).float()
-    Mmag = torch.sqrt(torch.add(torch.pow(pred_grad_x, 2), torch.pow(pred_grad_y, 2))).float()
-    IM = torch.add(torch.ones(config.IMG_SIZE, config.IMG_SIZE), torch.neg(torch.pow(torch.add(IMx, IMy), 2)))
-    numerator = torch.sum(torch.mul(Mmag, IM))
+    IMx = (image_grad_x * pred_grad_x).float()
+    IMy = (image_grad_y * pred_grad_y).float()
+    Mmag = (pred_grad_x.pow(2) + pred_grad_y.pow(2)).sqrt().float()
+    IM = 1 - (IMx + IMy).pow(2)
+    numerator = torch.sum(Mmag * IM)
     denominator = torch.sum(Mmag)
-    loss = loss + torch.div(numerator, denominator)
+    loss = loss + numerator / denominator
+
   return torch.div(loss, len(image))
 
 
@@ -39,7 +40,7 @@ def hairmat_loss(pred, image, mask):
   mask_flat = mask.squeeze(1).view(-1).long()
   cross_entropy_loss = F.cross_entropy(pred_flat, mask_flat)
   image_loss = image_gradient_loss(image, pred).to(DEVICE)
-  return cross_entropy_loss + config.GRAD_LOSS_LAMBDA * image_loss.float()
+  return cross_entropy_loss, image_loss.float()
 
 def iou_loss(pred, mask):
   pred = torch.argmax(pred, 1).long()
