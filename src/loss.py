@@ -36,8 +36,8 @@ class HairMattingLoss(nn.Module):
     loss = self.bce_loss(pred, mask)
 
     if self.ratio_of_gradient > 0:
-      # cnvt to grayscale & unsqueeze the channel dim
-      grayscale = (0.2989 * img[:, 0] + 0.5870 * img[:, 1] + 0.1140 * img[:, 2]).unsqueeze(1)
+      # cnvt to grayscale & keep the channel dim
+      grayscale = img * torch.tensor([0.2989, 0.5870, 0.1140]).view(1, 3, 1, 1).sum(1, keepdim=True)
 
       I_x = F.conv2d(grayscale, self.sobel_kernel_x)
       G_x = F.conv2d(pred, self.sobel_kernel_x)
