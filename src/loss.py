@@ -15,7 +15,7 @@ class HairMattingLoss(nn.Module):
     super(HairMattingLoss, self).__init__()
 
     self.ratio_of_gradient = ratio_of_Gradient
-    self.bce_loss = nn.BCELoss()
+    self.bce_loss = nn.BCEWithLogitsLoss()
 
     if self.ratio_of_gradient > 0:
       sobel_kernel_x = torch.Tensor([
@@ -96,6 +96,8 @@ class HairMattingLoss(nn.Module):
 #   return cross_entropy_loss, image_loss
 
 def iou_loss(pred, mask):
+  pred = torch.sigmoid(pred)
+
   pred = pred.squeeze().long()
   mask = torch.squeeze(mask).long()
   Union = torch.where(pred > mask, pred, mask)
