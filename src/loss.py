@@ -22,14 +22,17 @@ class HairMattingLoss(nn.modules.loss._Loss):
         [2.0, 0.0, -2.0],
         [1.0, 0.0, -1.0]
       ])
-      self.sobel_kernel_x = sobel_kernel_x.view(1,1,3,3)
+      self.sobel_kernel_x = nn.Parameter(sobel_kernel_x.view(1,1,3,3))
 
       sobel_kernel_y = torch.Tensor([
         [1.0, 2.0, 1.0],
         [0.0, 0.0, 0.0],
         [-1.0, -2.0, -1.0]
       ])
-      self.sobel_kernel_y = sobel_kernel_y.view(1,1,3,3)
+      self.sobel_kernel_y = nn.Parameter(sobel_kernel_y.view(1,1,3,3))
+
+      self.sobel_kernel_x.requires_grad = False
+      self.sobel_kernel_y.requires_grad = False
 
   def forward(self, pred, mask, img):
     loss = self.bce_loss(pred, mask)
@@ -90,7 +93,7 @@ class HairMattingLoss(nn.modules.loss._Loss):
 #   return cross_entropy_loss, image_loss
 
 def iou_loss(pred, mask):
-  pred = pred.long()
+  pred = pred.squeeze().long()
   mask = torch.squeeze(mask).long()
   Union = torch.where(pred > mask, pred, mask)
   Overlep = torch.mul(pred, mask)
