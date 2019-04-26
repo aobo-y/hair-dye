@@ -50,7 +50,8 @@ class HairMattingLoss(nn.Module):
       rang_grad = 1 - (I_x * G_x + I_y * G_y).pow(2)
       # rang_grad = rang_grad if rang_grad > 0 else 0
 
-      loss2 = torch.sum(G * rang_grad) / torch.sum(G) + 1e-6
+      loss2 = (G * rang_grad).sum((1, 2, 3)) / G.sum((1, 2, 3))
+      loss2 = loss2.mean()
 
       loss = loss + loss2 * self.ratio_of_gradient
 
