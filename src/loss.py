@@ -31,14 +31,17 @@ class HairMattingLoss(nn.modules.loss._Loss):
       ])
       self.sobel_kernel_y = sobel_kernel_y.view(1,1,3,3)
 
-  def forward(self, pred, mask, image):
+  def forward(self, pred, mask, img):
     loss = self.bce_loss(pred, mask)
 
     if self.ratio_of_gradient > 0:
-      I_x = F.conv2d(image, self.sobel_kernel_x)
+      # cnvt to grayscale & unsqueeze the channel dim
+      grayscale = (0.2989 * img[:, 0] + 0.5870 * img[:, 1] + 0.1140 * img[:, 2]).unsqueeze(1)
+
+      I_x = F.conv2d(grayscale, self.sobel_kernel_x)
       G_x = F.conv2d(pred, self.sobel_kernel_x)
 
-      I_y = F.conv2d(image, self.sobel_kernel_y)
+      I_y = F.conv2d(grayscale, self.sobel_kernel_y)
       G_y = F.conv2d(pred, self.sobel_kernel_y)
 
       G = torch.sqrt(G_x.pow(2) + G_y.pow(2))
@@ -87,7 +90,7 @@ class HairMattingLoss(nn.modules.loss._Loss):
 #   return cross_entropy_loss, image_loss
 
 def iou_loss(pred, mask):
-  pred = torch.argmax(pred, 1).long()
+  pred = pred.long()
   mask = torch.squeeze(mask).long()
   Union = torch.where(pred > mask, pred, mask)
   Overlep = torch.mul(pred, mask)
