@@ -10,9 +10,10 @@ import config
 USE_CUDA = torch.cuda.is_available()
 DEVICE = torch.device("cuda" if USE_CUDA else "cpu")
 
-class HairMattingLoss(nn.modules.loss._Loss):
+class HairMattingLoss(nn.Module):
   def __init__(self, ratio_of_Gradient=0.0):
     super(HairMattingLoss, self).__init__()
+
     self.ratio_of_gradient = ratio_of_Gradient
     self.bce_loss = nn.BCELoss()
 
@@ -21,18 +22,15 @@ class HairMattingLoss(nn.modules.loss._Loss):
         [1.0, 0.0, -1.0],
         [2.0, 0.0, -2.0],
         [1.0, 0.0, -1.0]
-      ])
-      self.sobel_kernel_x = nn.Parameter(sobel_kernel_x.view(1,1,3,3))
+      ]).view(1,1,3,3)
+      self.sobel_kernel_x = nn.Parameter(sobel_kernel_x, False)
 
       sobel_kernel_y = torch.Tensor([
         [1.0, 2.0, 1.0],
         [0.0, 0.0, 0.0],
         [-1.0, -2.0, -1.0]
-      ])
-      self.sobel_kernel_y = nn.Parameter(sobel_kernel_y.view(1,1,3,3))
-
-      self.sobel_kernel_x.requires_grad = False
-      self.sobel_kernel_y.requires_grad = False
+      ]).view(1,1,3,3)
+      self.sobel_kernel_y = nn.Parameter(sobel_kernel_y, False)
 
   def forward(self, pred, mask, img):
     loss = self.bce_loss(pred, mask)
@@ -49,7 +47,7 @@ class HairMattingLoss(nn.modules.loss._Loss):
 
       G = torch.sqrt(G_x.pow(2) + G_y.pow(2))
 
-      rang_grad = 1 - torch.pow(I_x * G_x + I_y * G_y, 2)
+      rang_grad = 1 - (I_x * G_x + I_y * G_y).pow(2)
       # rang_grad = rang_grad if rang_grad > 0 else 0
 
       loss2 = torch.sum(G * rang_grad) / torch.sum(G) + 1e-6
