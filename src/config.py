@@ -21,4 +21,4 @@ BATCH_SIZE = 4            # size of the mini batch in training state
 LR = 0.00001                # learning ratio
 PRINT_EVERY = 100          # print the loss every x iterations
 
-GRAD_LOSS_LAMBDA = 0.3
+GRAD_LOSS_LAMBDA = 0.5

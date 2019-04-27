@@ -9,12 +9,13 @@ from datetime import datetime
 import numpy as np
 import matplotlib.pyplot as plt
 import torch
+from torch import nn
 from torch.utils.data import DataLoader
 from torch import optim
 import config
 from utils import create_figure
 
-from loss import iou_loss, hairmat_loss
+from loss import iou_loss, HairMattingLoss
 
 USE_CUDA = torch.cuda.is_available()
 DEVICE = torch.device("cuda" if USE_CUDA else "cpu")
@@ -33,6 +34,8 @@ class Trainer:
         self.trained_epoch = 0
         self.train_loss = {'loss': [], 'iou':[]}
         self.dev_loss = {'loss': [], 'iou':[]}
+
+        self.loss = HairMattingLoss(config.GRAD_LOSS_LAMBDA).to(DEVICE)
 
     def log(self, *args):
         '''formatted log output for training'''
@@ -65,13 +68,12 @@ class Trainer:
         image, mask = (i.to(DEVICE) for i in training_batch)
 
         pred = self.model(image)
-        loss = hairmat_loss(pred, image, mask)
+        loss = self.loss(pred, mask, image)
 
         # if in training, not validate
         if not val:
             # Zero gradients
             self.optimizer.zero_grad()
-
             loss.backward()
 
             # Adjust model weights
@@ -113,7 +115,6 @@ class Trainer:
                 loss_sum += loss
                 iou_sum += iou
 
-
                 # Print progress
                 iteration = idx + 1
                 if iteration % config.PRINT_EVERY == 0:
@@ -122,7 +123,7 @@ class Trainer:
 
                     self.log('Epoch {}; Iter: {}; Percent: {:.1f}%; Avg loss: {:.4f}; Avg IOU: {:.4f};'.format(epoch, iteration, iteration / len(trainloader) * 100, avg_loss, avg_iou))
 
-                    # pred = pred[0].argmax(0)
+                    # pred = pred[0]
                     # self.save_sample_imgs(training_batch[0][0], training_batch[1][0], pred, epoch, iteration)
 
 
@@ -145,7 +146,7 @@ class Trainer:
                     iou_sum += iou
 
                     # if i == 0:
-                    #     pred = pred[0].argmax(0)
+                    #     pred = pred[0]
                     #     self.save_sample_imgs(dev_batch[0][0], dev_batch[1][0], pred, epoch, 'val')
 
                 avg_loss = loss_sum / len(devloader)
