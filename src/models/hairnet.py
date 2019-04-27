@@ -120,6 +120,6 @@ class MobileHairNet(nn.Module):
     decode_layer4 = torch.add(self.decode_layer4(decode_layer3), encode_layer1)
     out = self.decode_layer5(decode_layer4)
 
-    # out = torch.sigmoid(out)
+    out = torch.sigmoid(out)
 
     return out

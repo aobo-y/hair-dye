@@ -15,7 +15,7 @@ class HairMattingLoss(nn.Module):
     super(HairMattingLoss, self).__init__()
 
     self.ratio_of_gradient = ratio_of_Gradient
-    self.bce_loss = nn.BCEWithLogitsLoss()
+    self.bce_loss = nn.BCELoss()
 
     if self.ratio_of_gradient > 0:
       sobel_kernel_x = torch.Tensor([
@@ -49,10 +49,10 @@ class HairMattingLoss(nn.Module):
       I_y = F.conv2d(grayscale, self.sobel_kernel_y)
       G_y = F.conv2d(pred, self.sobel_kernel_y)
 
-      G = torch.sqrt(G_x.pow(2) + G_y.pow(2))
+      # avoid 0 sqrt
+      G = torch.sqrt(G_x.pow(2) + G_y.pow(2) + 1e-6)
 
       rang_grad = 1 - (I_x * G_x + I_y * G_y).pow(2)
-      # rang_grad = rang_grad if rang_grad > 0 else 0
 
       loss2 = (G * rang_grad).sum((1, 2, 3)) / G.sum((1, 2, 3))
       loss2 = loss2.mean()
@@ -96,18 +96,20 @@ class HairMattingLoss(nn.Module):
 #   return cross_entropy_loss, image_loss
 
 def iou_loss(pred, mask):
-  pred = torch.sigmoid(pred)
-
+  pred[pred > 0.5] = 1
+  pred[pred <= 0.5] = 0
   pred = pred.squeeze().long()
-  mask = torch.squeeze(mask).long()
+  mask = mask.squeeze().long()
   Union = torch.where(pred > mask, pred, mask)
   Overlep = torch.mul(pred, mask)
   loss = torch.div(torch.sum(Overlep).float(), torch.sum(Union).float())
   return loss
 
 def acc_loss(pred, mask):
-  pred = torch.argmax(pred, 1).long()
-  mask = torch.squeeze(mask).long()
+  pred[pred > 0.5] = 1
+  pred[pred <= 0.5] = 0
+  pred = pred.squeeze().long()
+  mask = mask.squeeze().long()
   all_ones = torch.ones_like(mask)
   all_zeros = torch.zeros_like(mask)
   Right = torch.where(pred == mask, all_ones, all_zeros)
@@ -116,8 +118,10 @@ def acc_loss(pred, mask):
   return loss
 
 def F1_loss(pred, mask):
-  pred = torch.argmax(pred, 1).long()
-  mask = torch.squeeze(mask).long()
+  pred[pred > 0.5] = 1
+  pred[pred <= 0.5] = 0
+  pred = pred.squeeze().long()
+  mask = mask.squeeze().long()
   all_ones = torch.ones_like(mask)
   all_zeros = torch.zeros_like(mask)
   #Right = torch.where(pred == mask, all_ones, all_zeros)
