@@ -43,11 +43,11 @@ class HairMattingLoss(nn.Module):
       # cnvt to grayscale & keep the channel dim
       grayscale = (img * self.rgb_ratios).sum(1, keepdim=True)
 
-      I_x = F.conv2d(grayscale, self.sobel_kernel_x)
-      G_x = F.conv2d(pred, self.sobel_kernel_x)
+      I_x = F.conv2d(grayscale, self.sobel_kernel_x) / 4
+      G_x = F.conv2d(pred, self.sobel_kernel_x) / 4
 
-      I_y = F.conv2d(grayscale, self.sobel_kernel_y)
-      G_y = F.conv2d(pred, self.sobel_kernel_y)
+      I_y = F.conv2d(grayscale, self.sobel_kernel_y) / 4
+      G_y = F.conv2d(pred, self.sobel_kernel_y) / 4
 
       # avoid 0 sqrt
       G = torch.sqrt(G_x.pow(2) + G_y.pow(2) + 1e-6)
