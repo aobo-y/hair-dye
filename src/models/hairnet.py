@@ -93,15 +93,13 @@ class MobileHairNet(nn.Module):
       _Layer_Depwise_Decode(in_channel=2 * nf, out_channel=2 * nf, kernel_size=kernel_size),
       _Layer_Upsample(),
       _Layer_Depwise_Decode(in_channel=2 * nf, out_channel=2 * nf, kernel_size=kernel_size),
-      nn.Conv2d(in_channels=2 * nf, out_channels=2, kernel_size=kernel_size, padding=1)
+      nn.Conv2d(in_channels=2 * nf, out_channels=1, kernel_size=kernel_size, padding=1)
     )
 
     self.encode_to_decoder4 = nn.Conv2d(in_channels=16 * nf, out_channels=32 * nf, kernel_size=1)
     self.encode_to_decoder3 = nn.Conv2d(in_channels=8 * nf, out_channels=2 * nf, kernel_size=1)
     self.encode_to_decoder2 = nn.Conv2d(in_channels=4 * nf, out_channels=2 * nf, kernel_size=1)
     self.encode_to_decoder1 = nn.Conv2d(in_channels=2 * nf, out_channels=2 * nf, kernel_size=1)
-
-    self.soft_max = nn.Softmax(dim=1)
 
   def forward(self, x):
     # connet encode 4-> decode 1, encode 3-> decode 2, encode 2-> decode 3, encode 1-> decode 4
@@ -122,6 +120,6 @@ class MobileHairNet(nn.Module):
     decode_layer4 = torch.add(self.decode_layer4(decode_layer3), encode_layer1)
     out = self.decode_layer5(decode_layer4)
 
-    # out = self.soft_max(decode_layer5)
+    out = torch.sigmoid(out)
 
     return out
