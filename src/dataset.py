@@ -56,33 +56,12 @@ class HairDataset(torch.utils.data.Dataset):
         else:
             return default
 
-    # def image_aug(self, image, mask):
-    #     hooks_binmasks = ia.HooksImages(activator=self.activator_binmasks)
-    #     seq = iaa.SomeOf((1, 2), [
-    #         iaa.OneOf([
-    #             iaa.Affine(rotate=(-30, 30), name="Rotate"),
-    #             iaa.Affine(scale=(0.3, 1.3), name="Scale")
-    #         ]),
-    #         iaa.OneOf([
-    #             iaa.Multiply((0.5, 1.5), name="Multiply"), iaa.GaussianBlur((0, 3.0), name="GaussianBlur"),
-    #             iaa.CoarseDropout((0.05, 0.2), size_percent=(0.01, 0.1), name="CoarseDropout")
-    #         ])
-    #     ])
-
-    #     seq_det = seq.to_deterministic()  # call this for each batch again, NOT only once at the start
-    #     image_aug = np.squeeze(seq_det.augment_images(np.expand_dims(np.array(image), axis=0)), axis=0)
-    #     mask_aug = np.squeeze(seq_det.augment_images((np.expand_dims(np.array(mask), axis=0)), hooks=hooks_binmasks), axis=0)
-
-    #     return Image.fromarray(image_aug), Image.fromarray(mask_aug)
-
     def __getitem__(self, index):
         img_path = os.path.join(self.imagedir_path, self.image_names[index])
         transform_image = self.transformer.load(img_path)
 
         maskfilename = self.image_names[index].split('.')[0] + '.pbm'
         mask = Image.open(os.path.join(self.maskdir_path, maskfilename))
-
-        # image, mask = self.image_aug(image, mask)
 
         transform_mask = transforms.Compose([
             transforms.CenterCrop(min(mask.size[0], mask.size[1])),
