@@ -60,12 +60,9 @@ def evaluate(test_data, model, num, absolute=True):
     rows = [None] * num
     for i in range(num):
         idx = random.randint(0, len(test_data) - 1)
-    # for i, idx in enumerate([
-    #     203, 162, 53, 116, 159, 153, 140, 37, 184, 106, 133
-    # ]):
 
     # for i, idx in enumerate([
-    #     58, 151, 85, 34, 122, 119, 8, 144, 202, 154, 88
+    #     203, 159, 153, 154
     # ]):
         image, mask = (i.to(DEVICE).unsqueeze(0) for i in test_data[idx])
         pred = model(image)
