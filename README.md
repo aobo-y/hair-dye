@@ -12,7 +12,7 @@ $ source activate hairdye
 Deactivate the environment by
 
 ```
-source activate hairdye
+source deactivate
 ```
 
 ## Download dataset
