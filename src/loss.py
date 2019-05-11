@@ -1,9 +1,5 @@
-from skimage.color import rgb2gray
-from skimage import filters
-from sklearn.preprocessing import normalize
 import torch
 from torch import nn
-from torch.nn.modules.loss import _WeightedLoss
 import torch.nn.functional as F
 import config
 
