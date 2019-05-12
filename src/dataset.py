@@ -4,9 +4,6 @@ import random
 import torch.utils.data
 import torchvision.transforms as transforms
 from PIL import Image
-# from imgaug import augmenters as iaa
-# import imgaug as ia
-import numpy as np
 
 
 class ImgTransformer():
@@ -40,7 +37,7 @@ class HairDataset(torch.utils.data.Dataset):
     def __init__(self, data_folder, image_size=448, color_aug=False):
         self.data_folder = data_folder
         if not os.path.exists(self.data_folder):
-            raise Exception(" ! %s  not exists." % self.data_folder)
+            raise Exception("%s  not exists." % self.data_folder)
 
         self.imagedir_path = os.path.join(data_folder, "images")
         self.maskdir_path = os.path.join(data_folder, "masks")
@@ -49,12 +46,6 @@ class HairDataset(torch.utils.data.Dataset):
         self.image_size = image_size
 
         self.transformer = ImgTransformer(image_size, color_aug)
-
-    def activator_binmasks(images, image, augmenter, parents, default):
-        if augmenter.name in ["Multiply", "GaussianBlur", "CoarseDropout"]:
-            return False
-        else:
-            return default
 
     def __getitem__(self, index):
         img_path = os.path.join(self.imagedir_path, self.image_names[index])
