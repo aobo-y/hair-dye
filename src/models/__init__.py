@@ -1,5 +1,5 @@
 '''
-chatbot seq2seq models
+MobileHairNet models
 '''
 
 from .hairnet import MobileHairNet

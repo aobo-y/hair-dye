@@ -1,7 +1,8 @@
 import torch
 import torch.nn as nn
 from torch.nn import functional as F
-from unit import *
+from .unit import _EncodeBlockBlueGreen, _EncodeBlockGreenGreen, _EncodeBlock6Green
+from .unit import _DecodeBlockYellowOrange, _DecodeBlockYellowOrangeRed
 
 class MobileHairNet(nn.Module):
     def __init__(self, im_size=224):
