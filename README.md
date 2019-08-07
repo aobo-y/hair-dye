@@ -53,6 +53,6 @@ $ python main.py --mode=run --image=./path/to/the/image.png
 `num` is the random number of images from the set, default is `4`
 
 
-## Convert a PyTorch model to Tensorflow using ONNX Convert trained model to tensorflow trained model
+## Convert the PyTorch model to Tensorflow model using ONNX
 
 See the [notebook](./src/torch2tf.ipynb)
