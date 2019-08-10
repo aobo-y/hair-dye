@@ -6,6 +6,11 @@
 
 ```
 $ conda env create -f environment.yml
+```
+
+Activate environment
+
+```
 $ source activate hairdye
 ```
 
@@ -46,3 +51,8 @@ $ python main.py --mode=run --image=./path/to/the/image.png
 `set` can be one `train` and `test`, default is `test`
 
 `num` is the random number of images from the set, default is `4`
+
+
+## Convert the PyTorch model to Tensorflow model using ONNX
+
+See the [notebook](./src/torch2tf.ipynb)
