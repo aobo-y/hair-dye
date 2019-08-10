@@ -56,3 +56,7 @@ $ python main.py --mode=run --image=./path/to/the/image.png
 ## Convert the PyTorch model to Tensorflow model using ONNX
 
 See the [notebook](./src/torch2tf.ipynb)
+
+## Deploy the model to Android Application
+
+See our other [repo](https://github.com/quq99/hair-dye-android)
